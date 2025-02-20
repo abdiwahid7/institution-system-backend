@@ -94,6 +94,30 @@ router.get('/search', auth, async (req, res) => {
   }
 });
 
+// @route    PUT api/assignments/:id
+// @desc     Update an assignment
+// @access   Private/Admin
+router.put('/:id', [auth, admin], async (req, res) => {
+  const { title, description } = req.body;
+
+  try {
+    let assignment = await Assignment.findById(req.params.id);
+
+    if (!assignment) {
+      return res.status(404).json({ msg: 'Assignment not found' });
+    }
+
+    assignment.title = title;
+    assignment.description = description;
+
+    await assignment.save();
+    res.json(assignment);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 // @route    DELETE api/assignments/:id
 // @desc     Delete an assignment
 // @access   Private/Admin
